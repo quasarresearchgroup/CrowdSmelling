@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.commands">
+       <category
+            name="Sample Category"
+            id="crowdSmelling.commands.category">
+      </category>
+      <command
+            name="CrowdSmelling Command"
+            categoryId="crowdSmelling.commands.category"
+            id="crowdSmelling.commands.sampleCommand">
+      </command>
+   </extension>
+   
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            commandId="crowdSmelling.commands.codeMetrics"
+            class="crowdsmelling.handlers.SampleHandler">
+      </handler>         
+      <handler
+            commandId="crowdSmelling.commands.longMethod"
+            class="crowdsmelling.handlers.SampleHandler">
+      </handler>
+      <handler
+            commandId="crowdSmelling.commands.godClass"
+            class="crowdsmelling.handlers.SampleHandler">
+      </handler>
+      <handler
+            commandId="crowdSmelling.commands.featureEnvy"
+            class="crowdsmelling.handlers.SampleHandler">
+      </handler>
+      <handler
+            commandId="crowdSmelling.commands.dataClass"
+            class="crowdsmelling.handlers.SampleHandler">
+      </handler>
+      <handler
+            commandId="crowdSmelling.commands.informationPage"
+            class="crowdsmelling.handlers.SampleHandler">
+      </handler>
+   </extension>
+   
+   <extension
+         point="org.eclipse.ui.bindings">
+   </extension>
+   
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="menu:org.eclipse.ui.main.menu?after=additions">
+         <menu
+               label="Code Smells"
+               mnemonic="MCS"
+               tooltip="Code smells detection"
+               id="crowdSmelling.menus.sampleMenu">
+            <command
+                  commandId="crowdSmelling.commands.codeMetrics"
+                  id="crowdSmelling.menus.codeMetrics"
+                  label="Code Metrics"
+                  mnemonic="CM"
+                  name="Code Metrics"
+                  tooltip="Code Metrics">
+            </command>
+            <command
+                  commandId="crowdSmelling.commands.longMethod"
+                  id="crowdSmelling.menus.longMethod"
+                  label="Long Method"
+                  mnemonic="LM"
+                  name="Long Method"
+                  tooltip="Long Method detection">
+            </command>
+            <command
+                  commandId="crowdSmelling.commands.godClass"
+                  id="crowdSmelling.menus.godClass"
+                  label="God Class"
+                  mnemonic="GC"
+                  name="God Class"
+                  tooltip="God Class detection">
+            </command>
+            <command
+                  commandId="crowdSmelling.commands.featureEnvy"
+                  id="crowdSmelling.menus.featureEnvy"
+                  label="Feature Envy"
+                  mnemonic="FE"
+                  name="Feature Envy"
+                  tooltip="Feature Envy detection">
+            </command>
+            <command
+                  commandId="crowdSmelling.commands.dataClass"
+                  id="crowdSmelling.menus.dataClas"
+                  label="Data Class"
+                  mnemonic="DC"
+                  name="Data Class"
+                  tooltip="Data Class detection">
+            </command>   
+            <command
+                  commandId="crowdSmelling.commands.informationPage"
+                  id="crowdSmelling.menus.informationPage"
+                  label="About CrowdSmelling"
+                  mnemonic="IP"
+                  name="Information Page"
+                  icon="icons/info.png">
+                  tooltip="Information Page">
+            </command>                     
+         </menu>
+      </menuContribution>
+   </extension>
+   <extension
+         id="CrowdSmellingViewCategory"
+         name="CrowdSmelling Detections"
+         point="org.eclipse.ui.views">
+      <category
+            id="crowdSmelling"
+            name="CrowdSmelling">
+      </category>
+      <view
+            category="crowdSmelling"
+            class="crowdsmelling.views.SampleView"
+            icon="icons/sample.png"
+            id="crowdsmelling.views.SampleView"
+            inject="true"
+            name="CrowdSmelling Detections">
+      </view>
+   </extension>
+   <extension
+         id="CrowdSmellingPerspectiveEstensions"
+         name="CrowdSmelling Detections"
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.jdt.ui.JavaPerspective">
+         <view
+               id="crowdsmelling.views.SampleView"
+               ratio="0.5"
+               relationship="right"
+               relative="org.eclipse.ui.views.ProblemView">
+         </view>
+      </perspectiveExtension>
+   </extension>
+   <extension
+         id="CrowdSmellingHelpContext"
+         name="CrowdSmelling Help"
+         point="org.eclipse.help.contexts">
+      <contexts
+            file="contexts.xml">
+      </contexts>
+   </extension>
+
+</plugin>

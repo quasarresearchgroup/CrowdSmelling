@@ -46,7 +46,7 @@ public class SampleView extends ViewPart {
 	@Inject IWorkbench workbench;
 	
 	private Table table;
-	private TableViewer viewer;
+	private TableViewer tableviewer;
 	private Action action1;
 	private Action action2;
 	private Action doubleClickAction;
@@ -69,12 +69,19 @@ public class SampleView extends ViewPart {
 
 	@Override
 	public void createPartControl(Composite parent) {
-		viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+		
+		
+	    table = new Table(parent, SWT.BORDER | SWT.FULL_SELECTION | SWT.CHECK);
+	    //table.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		//viewer.setContentProvider(ArrayContentProvider.getInstance());
-		//viewer.setInput(new String[] { "One", "Two", "Three" });
-		//viewer.setLabelProvider(new ViewLabelProvider());
-
+	    table.setLinesVisible(true);
+	    table.setHeaderVisible(true);
+		
+		tableviewer = new TableViewer(table, SWT.LINE_SOLID | SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+		//tableviewer.setContentProvider(ArrayContentProvider.getInstance());
+		//tableviewer.setInput(new String[] { "One", "Two", "Three" });
+		//tableviewer.setLabelProvider(new ViewLabelProvider());
+		
 		// Create the help context id for the viewer's control
 		//workbench.getHelpSystem().setHelp(viewer.getControl(), "crowdSmelling.viewer");
 		//getSite().setSelectionProvider(viewer);
@@ -86,11 +93,7 @@ public class SampleView extends ViewPart {
 		
 		
 		//**************** Table   
-	    table = new Table(parent, SWT.BORDER | SWT.FULL_SELECTION | SWT.CHECK);
-	    //table.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-	    table.setLinesVisible(true);
-	    table.setHeaderVisible(true);
 	    
 	    TableColumn csID = new TableColumn(table, SWT.LEFT);
 	    csID.setText("ID");
@@ -121,18 +124,8 @@ public class SampleView extends ViewPart {
 	    
 	    table.addListener(SWT.Selection, new Listener() {
 	        public void handleEvent(Event e) {
-	        	//showMessage("event"+ e.type);
-/*		      String string = "";
-	          TableItem[] selection = table.getSelection();
-	          for (int i = 0; i < selection.length; i++)
-	            string += selection[i] + " ";
-	          showMessage("Selection={" + string + "} "+ e.item + " | "+table.getSelectionIndex() );
-          TableItem item = new TableItem(table, SWT.NONE, table.getSelectionIndex());
-	          //item.setText(" New Item ");
-	          showMessage("AAA"+ item.getText(2));*/
 	          
 	          TableItem item1 = (TableItem) e.item;
-	          int index = table.indexOf (item1);
 	          if (item1.getText(4)=="True") {
 	        	 item1.setText(4,"False"); 
 	          }
@@ -156,9 +149,9 @@ public class SampleView extends ViewPart {
 				SampleView.this.fillContextMenu(manager);
 			}
 		});
-		Menu menu = menuMgr.createContextMenu(viewer.getControl());
-		viewer.getControl().setMenu(menu);
-		getSite().registerContextMenu(menuMgr, viewer);
+		Menu menu = menuMgr.createContextMenu(tableviewer.getControl());
+		tableviewer.getControl().setMenu(menu);
+		getSite().registerContextMenu(menuMgr, tableviewer);
 	}
 
 	private void contributeToActionBars() {
@@ -215,7 +208,7 @@ public class SampleView extends ViewPart {
 	}
 
 	private void hookDoubleClickAction() {
-		viewer.addDoubleClickListener(new IDoubleClickListener() {
+		tableviewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
 				doubleClickAction.run();
 			}
@@ -223,13 +216,13 @@ public class SampleView extends ViewPart {
 	}
 	private void showMessage(String message) {
 		MessageDialog.openInformation(
-			viewer.getControl().getShell(),
+			tableviewer.getControl().getShell(),
 			"CrowdSmelling View",
 			message);
 	}
 
 	@Override
 	public void setFocus() {
-		viewer.getControl().setFocus();
+		tableviewer.getControl().setFocus();
 	}
 }

@@ -32,7 +32,6 @@ public class SampleHandler extends AbstractHandler {
 
 		if(event.getCommand().getId().equals("crowdSmelling.commands.codeMetrics")) {
 			CSDetection.Metrics();
-			MessageDialog.openInformation(window.getShell(),"CrowdSmelling","CrowdSmelling Code Metrics");
 		} 
 		else if(event.getCommand().getId().equals("crowdSmelling.commands.longMethod")) {
 			try {
@@ -41,7 +40,6 @@ public class SampleHandler extends AbstractHandler {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			MessageDialog.openInformation(window.getShell(),"CrowdSmelling","CrowdSmelling detection Long Method");
 		}
 		else if(event.getCommand().getId().equals("crowdSmelling.commands.godClass")) {
 			try {
@@ -50,20 +48,15 @@ public class SampleHandler extends AbstractHandler {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			MessageDialog.openInformation(window.getShell(),"CrowdSmelling","CrowdSmelling detection God Class");
 		}		
 		else if(event.getCommand().getId().equals("crowdSmelling.commands.featureEnvy")) {
 			CSDetection.featureEnvy();
-			MessageDialog.openInformation(window.getShell(),"CrowdSmelling","CrowdSmelling detection Feature Envy");
 		}
 		else if(event.getCommand().getId().equals("crowdSmelling.commands.dataClass")) {
 			CSDetection.dataClass();
-			MessageDialog.openInformation(window.getShell(),"CrowdSmelling","CrowdSmelling detection Data Class");
 		}		
 		else if(event.getCommand().getId().equals("crowdSmelling.commands.informationPage")) {
 			CSDetection.informationPage();
-			String info="Version: 1.0.0\n\n"+"Authors: José Reis\n"+"             Luís Prates\n"+"             FBA\n\n"+"www.crowdsmelling.com";
-			MessageDialog.openInformation(window.getShell(),"CrowdSmelling Information",info);
 		}
 
 /*		//define a variavel para  

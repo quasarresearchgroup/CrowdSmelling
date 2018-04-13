@@ -13,3 +13,4 @@ Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: lib/weka.jar,
  .,
  lib/json-simple-1.1.1.jar
+Import-Package: org.eclipse.core.resources

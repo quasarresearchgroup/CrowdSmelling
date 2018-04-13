@@ -10,6 +10,8 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.json.simple.JSONObject;
 import weka.classifiers.Classifier;
 import weka.core.converters.ConverterUtils.DataSource;
@@ -20,32 +22,33 @@ import weka.core.Instances;
 public class CodeSmellsDetection {
 	
 	public void Metrics() {
-		
+		MessageDialog.openInformation(null,"CrowdSmelling","CrowdSmelling Code Metrics");
 		
 	}	
 	public void longMethod() throws Exception {
 		classifyData("LongMethod.model", "structure-method.arff");
-		
+		MessageDialog.openInformation(null,"CrowdSmelling","CrowdSmelling detection Long Method");
 	}
 	
 	public void godClass() throws Exception {
 		//classifyData("GodClass.model","structure-class.arff");
-		
+		MessageDialog.openInformation(null,"CrowdSmelling","CrowdSmelling detection God Class");
 	}
 	
 	
 	public void featureEnvy() {
-		
+		MessageDialog.openInformation(null,"CrowdSmelling","CrowdSmelling detection Feature Envy");
 		
 	}
 	
 	public void dataClass() {
-		
+		MessageDialog.openInformation(null,"CrowdSmelling","CrowdSmelling detection Data Class");
 		
 	}
 	
 	public void informationPage() {
-			
+		String info="Version: 0.0.1\n\n"+"Authors: José Reis\n"+"             Luís Prates\n"+"             FBA\n\n"+"www.crowdsmelling.com";
+		MessageDialog.openInformation(null,"CrowdSmelling Information",info);	
 	}
 	
 	public void classifyData(String fileModel, String instanceStructure) throws Exception {
@@ -56,6 +59,7 @@ public class CodeSmellsDetection {
 //		prop.load (this.getClass().getClassLoader().getResourceAsStream("/conf/crowd.properties"));	
 		
 		//Get path to classifier model
+		//String workSpaceRootpath=ResourcesPlugin.getWorkspace().getRoot().getLocation().toString();
 		String workSpaceRootpath=this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
 		String fullPath = workSpaceRootpath.replaceFirst("/","" );		
 		fullPath = fullPath.replace("/", "\\");	
@@ -63,7 +67,7 @@ public class CodeSmellsDetection {
 		String fullPathfileModel = fullPath + "models\\" +  fileModel;
 		System.out.println("fullPathFile ->"+ fullPathfileModel);
 		
-		//fullPathFile="C:\\Java\\eclipse-workspace\\CrowdSmelling\\models\\" + fileModel;
+		fullPathfileModel="C:\\Java\\Git\\CrowdSmelling\\models\\" + fileModel;
 		
 		Path path= Paths.get(fullPathfileModel);
 		if (Files.exists(path)) {
@@ -87,8 +91,9 @@ public class CodeSmellsDetection {
 			
 			//load new dataset			
 			String fullPathinstanceStructure = fullPath + "models\\" +  instanceStructure;
-			//DataSource structureClass = new DataSource("C:\\Java\\eclipse-workspace\\CrowdSmelling-Information\\DataSets\\"+instanceStructure);
-			DataSource structureClass = new DataSource(fullPathinstanceStructure);
+			//DataSource structureClass = new DataSource(fullPathinstanceStructure);
+			DataSource structureClass = new DataSource("C:\\Java\\Git\\crowdSmelling\\models\\"+instanceStructure);
+			
 			Instances csInstance = structureClass.getDataSet();	
 			//set class index to the last attribute	    
 			csInstance.setClassIndex(csInstance.numAttributes()-1);
@@ -116,8 +121,13 @@ public class CodeSmellsDetection {
 */
 			
 			System.out.println("Classification: "+actualClassValue+", "+predClassValue);
+			
 			//Write DB
 			writeDBpost2Mysql();
+			MessageDialog.openInformation(null,"CrowdSmelling","Code Smells detection complete.");
+		}
+		else {
+			MessageDialog.openInformation(null,"ERROR"," Files not found:\n"+ fullPathfileModel);
 		}
 	}
 	
@@ -156,9 +166,9 @@ public class CodeSmellsDetection {
 			        sb.append(line + "\n");  
 			    }
 			    br.close();
-			    System.out.println("" + sb.toString());  
+			    MessageDialog.openInformation(null,"CrowdSmelling","" + sb.toString());
 			} else {
-			    System.out.println(con.getResponseMessage());  
+				MessageDialog.openInformation(null,"CrowdSmelling","" + con.getResponseMessage());
 			}  
 			 con.disconnect();
 		
@@ -170,5 +180,5 @@ public class CodeSmellsDetection {
 		}
 	}
 	
-		
+	
 }

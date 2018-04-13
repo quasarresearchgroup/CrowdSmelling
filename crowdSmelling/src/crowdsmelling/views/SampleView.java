@@ -2,8 +2,6 @@ package crowdsmelling.views;
 
 
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.part.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.Image;
@@ -15,8 +13,11 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.SWT;
-import javax.inject.Inject;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 
+import javax.inject.Inject;
+import crowdsmelling.WebServices;
 
 /**
  * This sample class demonstrates how to plug-in a new
@@ -47,10 +48,10 @@ public class SampleView extends ViewPart {
 	
 	private Table table;
 	private TableViewer tableviewer;
-	private Action action1;
-	private Action action2;
+	private Action actionCSdetection;
+	private Action actionCSvalidate;
 	private Action doubleClickAction;
-	 
+	private Action actionMetricsUpdate; 
 
 	class ViewLabelProvider extends LabelProvider implements ITableLabelProvider {
 		@Override
@@ -71,7 +72,7 @@ public class SampleView extends ViewPart {
 	public void createPartControl(Composite parent) {
 		
 		
-	    table = new Table(parent, SWT.BORDER | SWT.FULL_SELECTION | SWT.CHECK);
+	    table = new Table(parent, SWT.BORDER | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
 	    //table.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 	    table.setLinesVisible(true);
@@ -122,7 +123,7 @@ public class SampleView extends ViewPart {
 	        item.setText(new String[] {""+i, "package" + i, "class " + i,"Method " + i,"True"});
 	    }
 	    
-	    table.addListener(SWT.Selection, new Listener() {
+	   /* table.addListener(SWT.Selection, new Listener() {
 	        public void handleEvent(Event e) {
 	          
 	          TableItem item1 = (TableItem) e.item;
@@ -135,7 +136,36 @@ public class SampleView extends ViewPart {
 	          
 	          showMessage (item1.getText(0)+"|"+item1.getText(1)+"|"+item1.getText(2)+"|"+item1.getText(3)+"|"+item1.getText(4));
 	        }
-	    });
+	    });*/
+	    
+	    
+	    table.addMouseListener(new MouseListener() {
+			@Override
+			public void mouseDoubleClick(MouseEvent e) {
+				 Table table =(Table) e.getSource();
+				 TableItem item1 = (TableItem)  table.getItem(table.getSelectionIndex());//e.item;
+		          if (item1.getText(4)=="True") {
+		        	 item1.setText(4,"False"); 
+		          }
+		          else {
+		        	  item1.setText(4,"True"); 
+		          }
+		          
+		          showMessage (item1.getText(0)+"|"+item1.getText(1)+"|"+item1.getText(2)+"|"+item1.getText(3)+"|"+item1.getText(4));			
+			}
+
+			@Override
+			public void mouseDown(MouseEvent arg0) {
+				
+			}
+
+			@Override
+			public void mouseUp(MouseEvent arg0) {
+				
+			}
+
+
+        });
 		
 	}
 
@@ -161,52 +191,83 @@ public class SampleView extends ViewPart {
 	}
 
 	private void fillLocalPullDown(IMenuManager manager) {
-		manager.add(action1);
+		manager.add(actionMetricsUpdate);
 		manager.add(new Separator());
-		manager.add(action2);
+		manager.add(actionCSdetection);
+		manager.add(actionCSvalidate);	
 	}
 
 	private void fillContextMenu(IMenuManager manager) {
-		manager.add(action1);
-		manager.add(action2);
+		manager.add(actionMetricsUpdate);
+		manager.add(new Separator());
+		manager.add(actionCSdetection);
+		manager.add(actionCSvalidate);	
 		// Other plug-ins can contribute there actions here
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
 	
 	private void fillLocalToolBar(IToolBarManager manager) {
-		manager.add(action1);
-		manager.add(action2);
+		manager.add(actionMetricsUpdate);
+		manager.add(new Separator());
+		manager.add(actionCSdetection);
+		manager.add(actionCSvalidate);	
+		
 	}
 
 	private void makeActions() {
-		action1 = new Action() {
+		//Action Update Metrics 
+		actionMetricsUpdate = new Action() {
+			public void run() {
+				showMessage("Update Metrics is end.");
+			}
+		};
+		actionMetricsUpdate.setText("Update Metrics");
+		actionMetricsUpdate.setToolTipText("Update Metrics");
+		actionMetricsUpdate.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
+			getImageDescriptor(ISharedImages.IMG_TOOL_REDO));
+
+		//Action Update Metrics
+		actionCSdetection = new Action() {
 			public void run() {
 				showMessage("Code Smells Detections is end.");
 			}
 		};
-		action1.setText("Action 1");
-		action1.setToolTipText("Code Smell Detection");
-		action1.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
+		actionCSdetection.setText("Code Smell Detection");
+		actionCSdetection.setToolTipText("Code Smell Detection");
+		actionCSdetection.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
 			getImageDescriptor(ISharedImages.IMG_OPEN_MARKER));
 		
-		action2 = new Action() {
+		//Action CS validation 
+		actionCSvalidate = new Action() {
 			public void run() {
+				TableItem item;
+				byte iscodesmell;
+				int id;
+				
+				for (int i = 0; i<table.getItemCount(); i++) {
+					item = (TableItem)  table.getItem(i);       
+					if (item.getText(4)=="True") {
+						iscodesmell=1; 
+					}
+					else {
+						iscodesmell=0;
+					}
+					id=Integer.parseInt(item.getText(0)+30);
+					showMessage ("id->"+ id + " | isCS-> " +iscodesmell);
+					WebServices webservices= new WebServices();
+					webservices.writePut2Mysql(id, iscodesmell);
+				}
 				showMessage("Code Smells Validation is end.");
 			}
 		};
-		action2.setText("Action 2");
-		action2.setToolTipText("Validate Results");
-		action2.setImageDescriptor(workbench.getSharedImages().
+		actionCSvalidate.setText("Validate Results");
+		actionCSvalidate.setToolTipText("Validate Results");
+		actionCSvalidate.setImageDescriptor(workbench.getSharedImages().
 				getImageDescriptor(ISharedImages.IMG_OBJS_TASK_TSK));
-		doubleClickAction = new Action() {
-			public void run() {
-				//IStructuredSelection selection = viewer.getStructuredSelection();
-				//Object obj = selection.getFirstElement();
-				showMessage("Double-click detected on "); //+obj.toString());
-			}
-		};
+
 	}
 
+	
 	private void hookDoubleClickAction() {
 		tableviewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {

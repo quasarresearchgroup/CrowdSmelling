@@ -1,6 +1,7 @@
 package crowdsmelling;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -11,6 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.json.simple.JSONObject;
 import weka.classifiers.Classifier;
@@ -22,27 +24,69 @@ import weka.core.Instances;
 public class CodeSmellsDetection {
 	
 	public void Metrics() {
-		MessageDialog.openInformation(null,"CrowdSmelling","CrowdSmelling Code Metrics");
+		MessageDialog.openInformation(null,"CrowdSmelling Code Metrics","Activate the view:\n" + 
+						"Windows -> Show View -> Other -> CrowdSmelling->CrowdSmelling Detections");
 		
 	}	
 	public void longMethod() throws Exception {
-		classifyData("LongMethod.model", "structure-method.arff");
-		MessageDialog.openInformation(null,"CrowdSmelling","CrowdSmelling detection Long Method");
+		//classifyData("LongMethod.model", "structure-method.arff");
+		MessageDialog.openInformation(null,"CrowdSmelling detection Long Method","Activate the view:\n" + 
+						"Windows -> Show View -> Other -> CrowdSmelling->CrowdSmelling Detections");
+/*
+        System.out.println(fileName);
+       
+        System.out.println( this.getClass().getResource("/LongMethod.model"));
+        System.out.println(this.getClass().getClassLoader().getResource(fileName)); 
+       	System.out.println(this.getClass().getClassLoader().getResource("/LongMethod.model"));
+     
+		
+		System.out.println(this.getClass().getClassLoader().getResource("/models/LongMethod.model"));
+                
+        URL fullPathfileModel = this.getClass().getClassLoader().getResource("/models/LongMethod.model");
+        System.out.println(fullPathfileModel.getPath());
+        System.out.println(fullPathfileModel.getFile());
+        
+        //Path path= Paths.get(fullPathfileModel);
+        
+        File f =new File(fullPathfileModel.getPath()); 
+        String ficheiro= f.toPath().toString(); 
+        System.out.println(ficheiro);
+        
+        MessageDialog.openInformation(null,"ficheiro","ficheiro \n"+ ficheiro);
+    	Object[] model = weka.core.SerializationHelper.readAll(ficheiro);
+    	System.out.println("model name: "+ model[0].getClass().getTypeName());
+    	MessageDialog.openInformation(null,"MODEL","MODEL \n"+ model[0].getClass().getTypeName());
+    	
+    	if (Files.exists(f.toPath())) {
+		      // file exist 
+		    	//Object[] model = weka.core.SerializationHelper.readAll(ficheiro);
+			//get model
+		    System.out.println("model name: "+ model[0].getClass().getTypeName()); 
+		    
+    	}
+    	else {
+			MessageDialog.openInformation(null,"ERROR"," File not found:\n"+ fullPathfileModel);
+		}*/
+        
+
 	}
 	
 	public void godClass() throws Exception {
 		//classifyData("GodClass.model","structure-class.arff");
-		MessageDialog.openInformation(null,"CrowdSmelling","CrowdSmelling detection God Class");
+		MessageDialog.openInformation(null,"CrowdSmelling detection God Class","Activate the view:\n" +
+						"Windows -> Show View -> Other -> CrowdSmelling->CrowdSmelling Detections");
 	}
 	
 	
 	public void featureEnvy() {
-		MessageDialog.openInformation(null,"CrowdSmelling","CrowdSmelling detection Feature Envy");
+		MessageDialog.openInformation(null,"CrowdSmelling detection Feature Envy","Activate the view:\n" + 
+						"Windows -> Show View -> Other -> CrowdSmelling->CrowdSmelling Detections");
 		
 	}
 	
 	public void dataClass() {
-		MessageDialog.openInformation(null,"CrowdSmelling","CrowdSmelling detection Data Class");
+		MessageDialog.openInformation(null,"CrowdSmelling detection Data Class","Activate the view:\n" + 
+						"Windows -> Show View -> Other -> CrowdSmelling->CrowdSmelling Detections");
 		
 	}
 	
@@ -60,14 +104,17 @@ public class CodeSmellsDetection {
 		
 		//Get path to classifier model
 		//String workSpaceRootpath=ResourcesPlugin.getWorkspace().getRoot().getLocation().toString();
-		String workSpaceRootpath=this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
-		String fullPath = workSpaceRootpath.replaceFirst("/","" );		
-		fullPath = fullPath.replace("/", "\\");	
+		//String workSpaceRootpath=this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
+		//String fullPath = workSpaceRootpath.replaceFirst("/","" );		
+		//fullPath = fullPath.replace("/", "\\");	
 		
+		URL fullPath = this.getClass().getClassLoader().getResource("/CrowdSmelling/models/"+fileModel);	
+		System.out.println("URL->" + fullPath+" | URLPath->"+fullPath.getPath());
 		String fullPathfileModel = fullPath + "models\\" +  fileModel;
-		System.out.println("fullPathFile ->"+ fullPathfileModel);
-		
+			
 		fullPathfileModel="C:\\Java\\Git\\CrowdSmelling\\models\\" + fileModel;
+		fullPathfileModel="\\models\\" + fileModel;
+		System.out.println("fullPathfileModel ->"+ fullPathfileModel);
 		
 		Path path= Paths.get(fullPathfileModel);
 		if (Files.exists(path)) {
@@ -127,7 +174,7 @@ public class CodeSmellsDetection {
 			MessageDialog.openInformation(null,"CrowdSmelling","Code Smells detection complete.");
 		}
 		else {
-			MessageDialog.openInformation(null,"ERROR"," Files not found:\n"+ fullPathfileModel);
+			MessageDialog.openInformation(null,"ERROR"," File not found:\n"+ fullPathfileModel);
 		}
 	}
 	

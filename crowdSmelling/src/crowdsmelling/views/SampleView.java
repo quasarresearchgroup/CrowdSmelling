@@ -251,6 +251,7 @@ public class SampleView extends ViewPart {
 		// Action Update Metrics
 		actionMetricsUpdate = new Action() {
 			public void run() {
+				//get metrics
 				showMessage("Update Metrics is end.");
 			}
 		};

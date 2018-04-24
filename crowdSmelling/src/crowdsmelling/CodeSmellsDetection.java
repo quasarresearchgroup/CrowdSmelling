@@ -1,7 +1,6 @@
 package crowdsmelling;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -95,10 +94,10 @@ public class CodeSmellsDetection {
 		MessageDialog.openInformation(null,"CrowdSmelling Information",info);	
 	}
 	
-	public void classifyData(String fileModel, String instanceStructure) throws Exception {
+	public void classifyData(String filesPath, String fileModel, String instanceStructure) throws Exception {
 	//Classifier modelClassifier = null;
 		
-//		Properties prop=new Properties();
+/*//		Properties prop=new Properties();
 //		String fullPathFile=prop.getProperty("models")+ fileModel;
 //		prop.load (this.getClass().getClassLoader().getResourceAsStream("/conf/crowd.properties"));	
 		
@@ -114,19 +113,20 @@ public class CodeSmellsDetection {
 			
 		fullPathfileModel="C:\\Java\\Git\\CrowdSmelling\\models\\" + fileModel;
 		fullPathfileModel="\\models\\" + fileModel;
-		System.out.println("fullPathfileModel ->"+ fullPathfileModel);
+		System.out.println("fullPathfileModel ->"+ fullPathfileModel);*/
 		
-		Path path= Paths.get(fullPathfileModel);
+		
+		Path path= Paths.get(filesPath);
 		if (Files.exists(path)) {
 		      // file exist 
-		    	Object[] model = weka.core.SerializationHelper.readAll(fullPathfileModel);
+		    	Object[] model = weka.core.SerializationHelper.readAll(filesPath+"\\"+fileModel);
 			//get model
 		    System.out.println("model name: "+ model[0].getClass().getTypeName()); 
 		    
 		    //modelClassifier = AbstractClassifier.forName(model[0].getClass().getTypeName(), null); 
 		    //modelClassifier = (AbstractClassifier) model[0];
 		    
-		    Classifier modelClassifier = (Classifier) model[0];    //**********NOVO 
+		    Classifier modelClassifier = (Classifier) model[0];    //Get model 
 			System.out.println("model 0: "+ model[0]);
 			
 			//get instances - attributes
@@ -137,9 +137,10 @@ public class CodeSmellsDetection {
 			System.out.println("::::::::::::Classificar on fly::::::::::::::::::::::::::::::");
 			
 			//load new dataset			
-			String fullPathinstanceStructure = fullPath + "models\\" +  instanceStructure;
+			//String fullPathinstanceStructure = fullPath + "models\\" +  instanceStructure;
 			//DataSource structureClass = new DataSource(fullPathinstanceStructure);
-			DataSource structureClass = new DataSource("C:\\Java\\Git\\crowdSmelling\\models\\"+instanceStructure);
+			
+			DataSource structureClass = new DataSource(filesPath+"\\"+instanceStructure);
 			
 			Instances csInstance = structureClass.getDataSet();	
 			//set class index to the last attribute	    
@@ -170,17 +171,17 @@ public class CodeSmellsDetection {
 			System.out.println("Classification: "+actualClassValue+", "+predClassValue);
 			
 			//Write DB
-			writeDBpost2Mysql();
+			writeDBpost2Mysql(model[0].getClass().getTypeName(), fileModel);
 			MessageDialog.openInformation(null,"CrowdSmelling","Code Smells detection complete.");
 		}
 		else {
-			MessageDialog.openInformation(null,"ERROR"," File not found:\n"+ fullPathfileModel);
+			MessageDialog.openInformation(null,"ERROR"," File not found:\n"+ filesPath);
 		}
 	}
 	
 	
 	@SuppressWarnings("unchecked")
-	private static void writeDBpost2Mysql() {	
+	private static void writeDBpost2Mysql(String model, String cstype) {	
 		String url="http://crowdsmelling.com/webservices/ws.php";
 		try {
 			URL object=new URL(url);
@@ -193,8 +194,8 @@ public class CodeSmellsDetection {
 	
 			JSONObject metrics   = new JSONObject();
 	
-			metrics.put("model_ML", "j48");
-			metrics.put("package", "Java Crowd package");
+			metrics.put("model_ML", model);
+			metrics.put("package", cstype);
 			metrics.put("project", "Java crowd projec");
 	
 			OutputStream os = con.getOutputStream();

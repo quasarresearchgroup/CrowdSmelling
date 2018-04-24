@@ -17,15 +17,12 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Shell;
-
-
-
 import javax.inject.Inject;
-import javax.swing.JFileChooser;
 
+//import org.eclipse.e4.core.services.events.IEventBroker;
 import crowdsmelling.CodeSmellsDetection;
 import crowdsmelling.WebServices;
+//import iscte.analytics.plugin.eclipse.events.InternalEventsBusBroker;
 
 /**
  * This sample class demonstrates how to plug-in a new workbench view. The view
@@ -122,7 +119,7 @@ public class SampleView extends ViewPart {
 		csCodeSmell.setText("Code Smell?");
 
 		csID.setWidth(50);
-		csPackage.setWidth(200);
+		csPackage.setWidth(250);
 		csClass.setWidth(200);
 		csMethod.setWidth(200);
 		csCodeSmell.setWidth(100);
@@ -236,10 +233,15 @@ public class SampleView extends ViewPart {
 	private void makeActions() {
 
 		CodeSmellsDetection csDetection = new CodeSmellsDetection();
-
+		//IEventBroker eventBusBroker =  new InternalEventsBusBroker().getBroker();
+		
 		// Action Config Path
 		actionConfigPath = new Action() {
 			public void run() {
+				//IEventBroker eventBusBroker JCaldeira; 
+		//		eventBusBroker.post("iscte/analytics/plugin/events/smells", "crowdConfigurations"); 
+				
+				//Get files models path
 				getFilesPath();
 			}
 		};
@@ -253,20 +255,21 @@ public class SampleView extends ViewPart {
 			public void run() {
 				//get metrics
 				showMessage("Update Metrics is end.");
+		//		eventBusBroker.post("iscte/analytics/plugin/events/smells", "updateMetrics"); 
 			}
 		};
 		actionMetricsUpdate.setText("Update Metrics");
 		actionMetricsUpdate.setToolTipText("Update Metrics");
 		actionMetricsUpdate.setImageDescriptor(
 				PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_REDO));
-
+		
 		// Action detections Long Method
 		actionCsDetectLongMethod = new Action() {
 			public void run() {
 				try {
-					csDetection.classifyData("LongMethod.model", "structure-method.arff");
+					csDetection.classifyData(filesPath, "LongMethod.model", "structure-method.arff");
+		//			eventBusBroker.post("iscte/analytics/plugin/events/smells", "longMethod"); 
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				showMessage("Long Method Detections is end.");
@@ -281,9 +284,9 @@ public class SampleView extends ViewPart {
 		actionCsDetectGodClass = new Action() {
 			public void run() {
 				try {
-					csDetection.classifyData("GodClass.model", "structure-class.arff");
+					csDetection.classifyData(filesPath, "GodClass.model", "structure-class.arff");
+		//			eventBusBroker.post("iscte/analytics/plugin/events/smells", "godClass");
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				showMessage("God Class Detections is end.");
@@ -298,9 +301,9 @@ public class SampleView extends ViewPart {
 		actionCsDetectFeatureEnvy = new Action() {
 			public void run() {
 				try {
-					csDetection.classifyData("FeatureEnvy.model", "structure-class.arff");
+					csDetection.classifyData(filesPath, "FeatureEnvy.model", "structure-class.arff");
+			//		eventBusBroker.post("iscte/analytics/plugin/events/smells", "featureEnvy");
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				showMessage("Feature Envy Detections is end.");
@@ -315,9 +318,9 @@ public class SampleView extends ViewPart {
 		actionCsDetectDataClass = new Action() {
 			public void run() {
 				try {
-					csDetection.classifyData("DataClass.model", "structure-class.arff");
+					csDetection.classifyData(filesPath, "DataClass.model", "structure-class.arff");
+			//		eventBusBroker.post("iscte/analytics/plugin/events/smells", "dataClass");
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				showMessage("Data Class Detections is end.");
@@ -348,12 +351,13 @@ public class SampleView extends ViewPart {
 					webservices.writePut2Mysql(id, iscodesmell);
 				}
 				showMessage("Code Smells Validation is end.");
+			//	eventBusBroker.post("iscte/analytics/plugin/events/smells", "validationCodeSmell");
 			}
 		};
 		actionCSvalidate.setText("Validate Results");
 		actionCSvalidate.setToolTipText("Validate Results");
-		actionCSvalidate
-				.setImageDescriptor(workbench.getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJS_TASK_TSK));
+		actionCSvalidate.setImageDescriptor(workbench.getSharedImages().
+				getImageDescriptor(ISharedImages.IMG_OBJS_TASK_TSK));
 
 	}
 	
@@ -363,7 +367,7 @@ public class SampleView extends ViewPart {
 		FileDialog dialog = new FileDialog(shell, SWT.OPEN | SWT.MULTI);
 		String[] filterExt = { "*.model;*.arff", "*.*" };
 		dialog.setFilterExtensions(filterExt);
-		dialog.setFilterPath("C:\\Java\\Git\\CrowdSmellingUpdateSite\\crowdsmellingUpdatesite\\models\\qwer");
+		dialog.setFilterPath("C:\\Java\\Git\\CrowdSmellingUpdateSite\\models\\");
 		dialog.open();
 		filesPath = dialog.getFilterPath();	
 	}
@@ -385,4 +389,5 @@ public class SampleView extends ViewPart {
 	public void setFocus() {
 		tableviewer.getControl().setFocus();
 	}
+	
 }

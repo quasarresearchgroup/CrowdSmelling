@@ -61,7 +61,7 @@ public class WebServices {
 	}
 
 	
-	public static void writePut2Mysql(int id, byte iscodesmell) {	
+	public  void writePut2Mysql(int id, byte iscodesmell) {	
 		String url="http://crowdsmelling.com/webservices/ws.php/metrics/"+id;
 		try {
 			URL object=new URL(url);

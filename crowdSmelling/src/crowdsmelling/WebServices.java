@@ -13,7 +13,9 @@ import org.json.simple.JSONObject;
 
 public class WebServices {
 	
-	public static void writePost2Mysql() {	
+	@SuppressWarnings("unchecked")
+	public String  writePost2Mysql(String username,String csType,String model_ML, String project_cs,String package_cs,String class_cs,String method_cs,double LOC,double CYCLO,boolean codesmellDetected,boolean iscodesmell) {	
+		String idRow = null;
 		String url="http://crowdsmelling.com/webservices/ws.php";
 		try {
 			URL object=new URL(url);
@@ -25,10 +27,18 @@ public class WebServices {
 			con.setRequestMethod("POST");
 	
 			JSONObject metrics   = new JSONObject();
-	
-			metrics.put("model_ML", "j48");
-			metrics.put("package", "Java Crowd package");
-			metrics.put("project", "Java crowd projec");
+
+			metrics.put("username", username);
+			metrics.put("csType", csType);
+			metrics.put("model_ML", model_ML);
+			metrics.put("project", project_cs);
+			metrics.put("package", package_cs);
+			metrics.put("class",class_cs);
+			metrics.put("method", method_cs);
+			metrics.put("LOC", LOC);
+			metrics.put("CYCLO", CYCLO);
+			metrics.put("codesmellDetected", codesmellDetected);
+			metrics.put("iscodesmell", iscodesmell);
 	
 			OutputStream os = con.getOutputStream();
 			os.write(metrics.toString().getBytes("UTF-8"));
@@ -46,21 +56,23 @@ public class WebServices {
 			        sb.append(line + "\n");  
 			    }
 			    br.close();
-			    MessageDialog.openInformation(null,"CrowdSmelling","" + sb.toString());
+			    idRow = sb.toString();//for method return
+			   // MessageDialog.openInformation(null,"CrowdSmelling","" + sb.toString());    
 			} else {
 				MessageDialog.openInformation(null,"CrowdSmelling","" + con.getResponseMessage());
 			}  
-			 con.disconnect();
-		
+			 con.disconnect();	 
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		return idRow;
 	}
 
 	
+	@SuppressWarnings("unchecked")
 	public  void writePut2Mysql(int id, byte iscodesmell) {	
 		String url="http://crowdsmelling.com/webservices/ws.php/metrics/"+id;
 		try {
@@ -76,7 +88,7 @@ public class WebServices {
 			
 			//metrics.put("id", id);
 			metrics.put("iscodesmell", iscodesmell);
-			 MessageDialog.openInformation(null,"CrowdSmelling","" +id+" |"+iscodesmell + " | "+ metrics);	
+			//MessageDialog.openInformation(null,"CrowdSmelling","" +id+" |"+iscodesmell + " | "+ metrics);	
 			OutputStream os = con.getOutputStream();
 			os.write(metrics.toString().getBytes("UTF-8"));
 			os.close();
@@ -93,7 +105,7 @@ public class WebServices {
 			        sb.append(line + "\n");  
 			    }
 			    br.close();
-			    MessageDialog.openInformation(null,"CrowdSmelling","" + sb.toString());
+			    //MessageDialog.openInformation(null,"CrowdSmelling","" + sb.toString());
 			} else {
 				MessageDialog.openInformation(null,"CrowdSmelling","" + con.getResponseMessage());
 			}  

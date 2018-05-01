@@ -1,6 +1,7 @@
 package crowdsmelling;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -94,7 +95,7 @@ public class CodeSmellsDetection {
 		MessageDialog.openInformation(null,"CrowdSmelling Information",info);	
 	}
 	
-	public void classifyData(String filesPath, String fileModel, String instanceStructure) throws Exception {
+	public void classifyData(Instance dataInstance, String codeSmellType, String username, String filesPath, String fileModel, String instanceStructure) throws Exception {
 	//Classifier modelClassifier = null;
 		
 /*//		Properties prop=new Properties();
@@ -119,7 +120,7 @@ public class CodeSmellsDetection {
 		Path path= Paths.get(filesPath);
 		if (Files.exists(path)) {
 		      // file exist 
-		    	Object[] model = weka.core.SerializationHelper.readAll(filesPath+"\\"+fileModel);
+		    Object[] model = weka.core.SerializationHelper.readAll(filesPath+"\\"+fileModel);
 			//get model
 		    System.out.println("model name: "+ model[0].getClass().getTypeName()); 
 		    
@@ -127,11 +128,11 @@ public class CodeSmellsDetection {
 		    //modelClassifier = (AbstractClassifier) model[0];
 		    
 		    Classifier modelClassifier = (Classifier) model[0];    //Get model 
-			System.out.println("model 0: "+ model[0]);
+			//System.out.println("model 0: "+ model[0]);
 			
 			//get instances - attributes
 			Instances headers = (Instances) model[1];
-			System.out.println("model 1: "+headers);
+			//System.out.println("model 1: "+headers);
 			System.out.println("headersnum: "+headers.numAttributes());
 
 			System.out.println("::::::::::::Classificar on fly::::::::::::::::::::::::::::::");
@@ -141,90 +142,47 @@ public class CodeSmellsDetection {
 			//DataSource structureClass = new DataSource(fullPathinstanceStructure);
 			
 			DataSource structureClass = new DataSource(filesPath+"\\"+instanceStructure);
+			Instances csInstances = structureClass.getDataSet();
 			
-			Instances csInstance = structureClass.getDataSet();	
 			//set class index to the last attribute	    
-			csInstance.setClassIndex(csInstance.numAttributes()-1);
+			csInstances.setClassIndex(csInstances.numAttributes()-1);
 			
+			csInstances.instance(0).setValue(headers.attribute(0),dataInstance.value(0));
+/*			System.out.println("0->"+csInstances.instance(0).value(0)+ " | " +  dataInstance.value(0));
+			csInstances.instance(0).setValue(headers.attribute(1),dataInstance.toString(1));
+			System.out.println("1->"+csInstances.instance(0).toString(1)+ " | " +  dataInstance.toString(1));
+			csInstances.instance(0).setValue(headers.attribute(2),dataInstance.toString(2));
+			System.out.println("2->"+csInstances.instance(0).toString(2)+ " | " +  dataInstance.toString(2));
+			csInstances.instance(0).setValue(headers.attribute(3),dataInstance.toString(3));
+			System.out.println("3->"+csInstances.instance(0).toString(3)+ " | " +  dataInstance.toString(3));
+			csInstances.instance(0).setValue(headers.attribute(4),dataInstance.toString(4));
+			System.out.println("4->"+csInstances.instance(0).toString(4)+ " | " +  dataInstance.toString(4));
+*/			
 			for(int i=5; i<headers.numAttributes()-1; i++){
 				//Set attribute - ONLY ONE INSTANCE EXISTES - FIRSTS ATTRIBUTES NOT NUMBERS????????
-				csInstance.instance(0).setValue(headers.attribute(i),i);
-				System.out.println(i+"-"+csInstance.instance(0));
+				csInstances.instance(0).setValue(headers.attribute(i),dataInstance.value(i));
 			}	
-	
-			//get class double value for first instance
-			double actualClassValue = csInstance.instance(0).classValue();
-			//call classifyInstance, which returns a double value for the class
-			double predClassValue = modelClassifier.classifyInstance(csInstance.instance(0));
-			 
-			// Write to file
-/*			Charset utf8 = StandardCharsets.UTF_8;
-			List<String> lines = Arrays.asList(csInstance+","+actualClassValue+", "+predClassValue);
-		     try {
-		          Files.write(Paths.get("file6.txt"), lines, utf8,
-		                  StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-		      } catch (IOException e) {
-		          e.printStackTrace();
-		      }
-*/
 			
+			if(dataInstance.toString(headers.numAttributes()-1)=="1") {
+				csInstances.instance(0).setValue(headers.attribute(headers.numAttributes()-1),"True");
+			System.out.println("dataIst->"+dataInstance);
+			System.out.println("Insta->"+csInstances.instance(0));	
+			}
+
+			//get class double value for first instance
+			double actualClassValue = csInstances.instance(0).classValue();
+			//call classifyInstance, which returns a double value for the class
+		
+			double predClassValue = modelClassifier.classifyInstance(csInstances.instance(0));
+
 			System.out.println("Classification: "+actualClassValue+", "+predClassValue);
 			
 			//Write DB
-			writeDBpost2Mysql(model[0].getClass().getTypeName(), fileModel);
-			MessageDialog.openInformation(null,"CrowdSmelling","Code Smells detection complete.");
+			//writeDBpost2Mysql(model[0].getClass().getTypeName(), fileModel);
+			//MessageDialog.openInformation(null,"CrowdSmelling","Code Smells detection complete.");
 		}
 		else {
 			MessageDialog.openInformation(null,"ERROR"," File not found:\n"+ filesPath);
-		}
-	}
-	
-	
-	@SuppressWarnings("unchecked")
-	private static void writeDBpost2Mysql(String model, String cstype) {	
-		String url="http://crowdsmelling.com/webservices/ws.php";
-		try {
-			URL object=new URL(url);
-	
-			HttpURLConnection con = (HttpURLConnection) object.openConnection();
-			con.setDoOutput(true);
-			con.setDoInput(true);
-			con.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-			con.setRequestMethod("POST");
-	
-			JSONObject metrics   = new JSONObject();
-	
-			metrics.put("model_ML", model);
-			metrics.put("package", cstype);
-			metrics.put("project", "Java crowd projec");
-	
-			OutputStream os = con.getOutputStream();
-			os.write(metrics.toString().getBytes("UTF-8"));
-			os.close();
-			
-			//display what returns the POST request
-	
-			StringBuilder sb = new StringBuilder();  
-			int HttpResult = con.getResponseCode(); 
-			if (HttpResult == HttpURLConnection.HTTP_OK) {
-			    BufferedReader br = new BufferedReader(
-			            new InputStreamReader(con.getInputStream(), "utf-8"));
-			    String line = null;  
-			    while ((line = br.readLine()) != null) {  
-			        sb.append(line + "\n");  
-			    }
-			    br.close();
-			    MessageDialog.openInformation(null,"CrowdSmelling","" + sb.toString());
-			} else {
-				MessageDialog.openInformation(null,"CrowdSmelling","" + con.getResponseMessage());
-			}  
-			 con.disconnect();
-		
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 	}
 	

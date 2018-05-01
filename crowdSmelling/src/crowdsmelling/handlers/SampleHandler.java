@@ -37,7 +37,6 @@ public class SampleHandler extends AbstractHandler {
 			try {
 				CSDetection.longMethod();
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -45,7 +44,6 @@ public class SampleHandler extends AbstractHandler {
 			try {
 				CSDetection.godClass();
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}		

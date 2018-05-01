@@ -6,7 +6,7 @@ import org.eclipse.ui.PlatformUI;
 public class InternalEventsBusBroker {
 	
 	public InternalEventsBusBroker() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public IEventBroker getBroker() {

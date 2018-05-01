@@ -169,8 +169,7 @@ public class SampleView extends ViewPart {
 					item1.setText(4, "true");
 				}
 
-				showMessage(item1.getText(0) + "|" + item1.getText(1) + "|" + item1.getText(2) + "|" + item1.getText(3)
-						+ "|" + item1.getText(4));
+				//showMessage(item1.getText(0) + "|" + item1.getText(1) + "|" + item1.getText(2) + "|" + item1.getText(3) + "|" + item1.getText(4));
 			}
 
 			@Override
